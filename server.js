@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // 🔹 Middleware
 app.use(cors());
@@ -14,10 +14,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // 🔹 Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/learningPlatform', {
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
+
 .then(() => console.log("✅ Connected to MongoDB"))
 .catch(err => console.error("❌ MongoDB connection error:", err));
 
@@ -94,10 +95,11 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/bookmarks/:username', async (req, res) => {
   const userKey = req.params.username;
   try {
-    const userBookmarks = await Bookmark.find({
-      $or: [{ username: userKey }, { email: userKey }]
-    });
-    res.json(userBookmarks);
+    const user = await User.findOne({
+  $or: [{ username: userKey }, { email: userKey }]
+});
+if (!user) return res.status(404).json({ message: 'User not found' });
+res.json({ bookmarks: user.bookmarks });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch bookmarks" });
   }
@@ -131,5 +133,5 @@ app.post('/api/bookmarks/:identifier', async (req, res) => {
 
 // 🔹 Start the server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

@@ -131,6 +131,10 @@ app.post('/api/bookmarks/:identifier', async (req, res) => {
   }
 });
 
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: 'API route not found' });
+});
+
 // 🔹 Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

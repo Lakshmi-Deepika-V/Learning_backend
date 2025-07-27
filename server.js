@@ -14,10 +14,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // 🔹 Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URL)
+
 
 .then(() => console.log("✅ Connected to MongoDB"))
 .catch(err => console.error("❌ MongoDB connection error:", err));

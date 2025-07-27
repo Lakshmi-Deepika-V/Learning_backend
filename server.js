@@ -131,8 +131,11 @@ app.post('/api/bookmarks/:identifier', async (req, res) => {
   }
 });
 
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ message: 'API route not found' });
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ message: 'API route not found' });
+  }
+  next();
 });
 
 // 🔹 Start the server
